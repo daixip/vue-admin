@@ -2,44 +2,125 @@
 <div id="login">
     <div id="login-wrap">
         <ul class="menu-tab">
-            <li v-for="item in mentTab" :key='item.id' :class="{'current':item.current}" @click="changeTab(item)">{{item.text}}</li>
+            <li v-for="item in menuTab" :key='item.id' :class="{'current':item.current}" @click="changeTab(item)">{{item.text}}</li>
         </ul>
-        <el-form :model="numberValidateForm" ref="numberValidateForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="邮箱" prop="email":rules="[{ required: true, message: '年龄不能为空'},{ type: 'number', message: '年龄必须为数字值'}]"> </el-form-item>
-        <el-input type="eamil" v-model.number="numberValidateForm.eamil" autocomplete="off"></el-input>
-        <el-form-item label="密码" prop="password":rules="[{ required: true, message: '年龄不能为空'},{ type: 'number', message: '年龄必须为数字值'}]"> </el-form-item>
-        <el-input type="password" v-model.number="numberValidateForm.password" autocomplete="off"></el-input>
-        <el-form-item label="验证码" prop="code":rules="[{ required: true, message: '年龄不能为空'},{ type: 'number', message: '年龄必须为数字值'}]"> </el-form-item>
-        <el-input type="code" v-model.number="numberValidateForm.code" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item>
-            <el-button type="primary" @click="submitForm('numberValidateForm')">提交</el-button>
-            <el-button @click="resetForm('numberValidateForm')">重置</el-button>
-        </el-form-item>
+        <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" class="demo-ruleForm">
+            <el-form-item  prop="email">  
+                <label>邮箱</label>
+                <el-input type="text" v-model="ruleForm.email" autocomplete="off" ></el-input>
+            </el-form-item>
+            <el-form-item prop="pass" class='pass'>
+                    <label>密码</label>
+                    <el-input type="text" v-model="ruleForm.pass" autocomplete="off" minlength='6' maxlength='20'></el-input>
+                </el-form-item>
+            <el-form-item prop="checkPass" class='pass'>
+                <label>重复密码</label>
+                <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off" minlength='6' maxlength='20'></el-input>
+            </el-form-item>
+            <el-form-item prop="code" class='code'>
+                <label>验证码</label>
+                <el-row :gutter="10">
+                    <el-col :span="15">
+                        <el-input v-model.number="ruleForm.code" minlength='6' maxlength='6'></el-input>
+                    </el-col>
+                    <el-col :span="9">
+                        <el-button class='button' type='danger'>获取验证码</el-button>
+                    </el-col>
+                </el-row>
+            </el-form-item>
+            <el-form-item class="submit">
+                <el-button type="success" @click="submitForm('ruleForm')" class='button'>提交</el-button>
+            </el-form-item>
         </el-form>
     </div> 
 </div>
 </template>
 <script>
-    export default {
-        data() {
+import {stripscript,validateUser,validatePassword,validateCode} from '@/utils/validate.js'
+export default {
+    data() {
+        //验证码
+        var checkAge = (rule, value, callback) => {
+            if (!value) {
+                return callback(new Error('请输入验证码'));
+            }else{
+                this.ruleForm.code=(stripscript(value));
+                value=this.ruleForm.code;
+                if(validateCode(value)){
+                    callback()
+                }else{
+                    return callback(new Error('验证码格式不对'));
+                }
+            }
+        };
+        //邮箱
+        var validateEmail = (rule, value, callback) => {
+                if (!value) {
+                    return callback(new Error('请输入邮箱'));
+                }else{    
+                    if(validateUser(value)){
+                       callback();
+                    }else{
+                        callback(new Error('邮箱格式不正确'));
+                    }
+                }
+        };
+        //密码
+        var validatePass = (rule, value, callback) => {
+            if (value === '') {
+            callback(new Error('请输入密码'));
+            } else{
+                this.ruleForm.pass=(stripscript(value));//过滤特殊字符并且去掉输入框中的特殊字符
+                value=this.ruleForm.pass;
+                if(validatePassword(value)){
+                    callback();
+                }else{
+                    callback(new Error('请输入6到20位字母加数字组成的密码'));
+                }
+            }
+        };
+        //重复密码
+        var validatePass2 = (rule, value, callback) => {
+            this.ruleForm.checkPass=(stripscript(value));
+            value=this.ruleForm.checkPass
+            if (value === '') {
+                callback(new Error('请再次输入密码'));
+            } else if (value !== this.ruleForm.pass) {
+                callback(new Error('两次输入密码不一致!'));
+            } else {
+                callback();
+            }
+        }
         return {
-            numberValidateForm: {
-            eamil: '',
-            password:'',
-            code:''
+            ruleForm: {
+            email:'',
+            pass: '',
+            checkPass: '',
+            code: ''
             },
-            mentTab:[
+            rules: {
+            email: [
+                { validator: validateEmail, trigger: 'blur' }
+            ],
+            pass: [
+                { validator: validatePass, trigger: 'blur' }
+            ],
+            checkPass: [
+                { validator: validatePass2, trigger: 'blur' }
+            ],
+            code: [
+                { validator: checkAge, trigger: 'blur' }
+            ]
+            },
+            menuTab:[
                 {text:'登录',current:true},
                 {text:'注册',current:false}
             ],
-        };
-        },
-        created(){},
-        mounted(){},
+        }
+    },
         methods: {
         changeTab(data){
-            this.mentTab.forEach(elem=>{
+            this.menuTab.forEach(elem=>{
                 elem.current=false;
             })
             data.current=true;
@@ -54,9 +135,6 @@
             }
             });
         },
-        resetForm(formName) {
-            this.$refs[formName].resetFields();
-        }
         }
     }
 </script>
@@ -84,30 +162,15 @@
             border-radius: 2px;
         }
     }
-    #login div{
-        width:60%;
-        margin:0 auto;
-    }
-    .el-form{
-        width:100%;
-        margin:0 auto;
-    }
-    .el-form-item{
-        display: inline-block;
-        vertical-align: middle;
-        margin-bottom: 55px;
-        color: white;
-    }
-    .el-input{
-        display: inline-block;
-        width:74%;
-        vertical-align: middle;
-        margin-bottom: 55px;
+    .demo-ruleForm{
+        margin-top: 30px;
+        label{color:#fff;}
+        .button{display: block;width:100%;};
+        .submit{margin-top: 40px;};
+        .code{margin-top: 20px;}
+        .pass{
+            margin-top: 10px;
+        }
     }
  
-</style>
-<style>
-   .el-form-item__label{
-        color:white !important;
-    }
 </style>
