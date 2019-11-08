@@ -12,8 +12,8 @@
             <el-form-item prop="pass" class='pass'>
                     <label>密码</label>
                     <el-input type="text" v-model="ruleForm.pass" autocomplete="off" minlength='6' maxlength='20'></el-input>
-                </el-form-item>
-            <el-form-item prop="checkPass" class='pass'>
+            </el-form-item>
+            <el-form-item prop="checkPass" class='pass' v-if="model==='reg'">
                 <label>重复密码</label>
                 <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off" minlength='6' maxlength='20'></el-input>
             </el-form-item>
@@ -24,7 +24,7 @@
                         <el-input v-model.number="ruleForm.code" minlength='6' maxlength='6'></el-input>
                     </el-col>
                     <el-col :span="9">
-                        <el-button class='button' type='danger'>获取验证码</el-button>
+                        <el-button class='button' type='danger' @click='getCode()'>获取验证码</el-button>
                     </el-col>
                 </el-row>
             </el-form-item>
@@ -36,6 +36,7 @@
 </div>
 </template>
 <script>
+import {getSms} from '@/api/login.js'
 import {stripscript,validateUser,validatePassword,validateCode} from '@/utils/validate.js'
 export default {
     data() {
@@ -113,29 +114,41 @@ export default {
             ]
             },
             menuTab:[
-                {text:'登录',current:true},
-                {text:'注册',current:false}
+                {text:'登录',current:true,type:'login'},
+                {text:'注册',current:false,type:'reg'}
             ],
+            model:'login'
         }
     },
-        methods: {
-        changeTab(data){
-            this.menuTab.forEach(elem=>{
-                elem.current=false;
-            })
-            data.current=true;
-        },
-        submitForm(formName) {
-            this.$refs[formName].validate((valid) => {
-            if (valid) {
-                alert('submit!');
-            } else {
-                console.log('error submit!!');
-                return false;
-            }
-            });
-        },
+    created(){
+      
+    },
+    methods: {
+    changeTab(data){
+        this.menuTab.forEach(elem=>{
+            elem.current=false;
+        })
+        data.current=true;
+        this.model=data.type
+    },
+    getCode(){
+        var data={
+            username: this.ruleForm.email,
+            module:'login'
+        };
+        getSms(data);
+    },
+    submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+        if (valid) {
+            alert('submit!');
+        } else {
+            console.log('error submit!!');
+            return false;
         }
+        });
+    },
+    }
     }
 </script>
 <style scoped lang="scss">
