@@ -2,34 +2,34 @@
 <div id="login">
     <div id="login-wrap">
         <ul class="menu-tab">
-            <li v-for="item in menuTab" :key='item.id' :class="{'current':item.current}" @click="changeTab(item)">{{item.text}}</li>
+            <li v-for="item in menuTab" :key='item.id' :class="{'current':item.current}" @click="changeTab(item,ruleForm)">{{item.text}}</li>
         </ul>
         <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" class="demo-ruleForm">
             <el-form-item  prop="email">  
                 <label>邮箱</label>
-                <el-input type="text" v-model="ruleForm.email" autocomplete="off" ></el-input>
+                <el-input type="text" v-model="ruleForm.email" autocomplete="off" prop='email'></el-input>
             </el-form-item>
             <el-form-item prop="pass" class='pass'>
-                    <label>密码</label>
-                    <el-input type="text" v-model="ruleForm.pass" autocomplete="off" minlength='6' maxlength='20'></el-input>
+                <label>密码</label>
+                <el-input type="text" v-model="ruleForm.pass" autocomplete="off" minlength='6' maxlength='20' prop="pass"></el-input>
             </el-form-item>
             <el-form-item prop="checkPass" class='pass' v-if="model==='reg'">
                 <label>重复密码</label>
-                <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off" minlength='6' maxlength='20'></el-input>
+                <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off" minlength='6' maxlength='20' prop="checkPass"></el-input>
             </el-form-item>
             <el-form-item prop="code" class='code'>
                 <label>验证码</label>
                 <el-row :gutter="10">
                     <el-col :span="15">
-                        <el-input v-model.number="ruleForm.code" minlength='6' maxlength='6'></el-input>
+                        <el-input v-model.number="ruleForm.code" minlength='6' maxlength='6' prop="code"></el-input>
                     </el-col>
                     <el-col :span="9">
-                        <el-button class='button' type='danger' @click='getCode()'>获取验证码</el-button>
+                        <el-button class='button' type='success' @click='getCode(ruleForm)' id="getCodeButton">获取验证码</el-button>
                     </el-col>
                 </el-row>
             </el-form-item>
             <el-form-item class="submit">
-                <el-button type="success" @click="submitForm('ruleForm')" class='button'>提交</el-button>
+                <el-button type="danger" @click="submitForm('ruleForm')" class='button' :disabled='model==="login"'>{{model==='login'?'登录':'注册'}}</el-button>
             </el-form-item>
         </el-form>
     </div> 
@@ -38,6 +38,7 @@
 <script>
 import {getSms} from '@/api/login.js'
 import {stripscript,validateUser,validatePassword,validateCode} from '@/utils/validate.js'
+import $ from 'jquery'
 export default {
     data() {
         //验证码
@@ -91,27 +92,27 @@ export default {
             } else {
                 callback();
             }
-        }
+        };
         return {
             ruleForm: {
-            email:'',
-            pass: '',
-            checkPass: '',
-            code: ''
+                email:'',
+                pass: '',
+                checkPass: '',
+                code: ''
             },
             rules: {
-            email: [
-                { validator: validateEmail, trigger: 'blur' }
-            ],
-            pass: [
-                { validator: validatePass, trigger: 'blur' }
-            ],
-            checkPass: [
-                { validator: validatePass2, trigger: 'blur' }
-            ],
-            code: [
-                { validator: checkAge, trigger: 'blur' }
-            ]
+                email: [
+                    { validator: validateEmail, trigger: 'blur' }
+                ],
+                pass: [
+                    { validator: validatePass, trigger: 'blur' }
+                ],
+                checkPass: [
+                    { validator: validatePass2, trigger: 'blur' }
+                ],
+                code: [
+                    { validator: checkAge, trigger: 'blur' }
+                ]
             },
             menuTab:[
                 {text:'登录',current:true,type:'login'},
@@ -124,19 +125,53 @@ export default {
       
     },
     methods: {
-    changeTab(data){
+    //切换面板
+    changeTab(data,ruleForm){
+        debugger;
         this.menuTab.forEach(elem=>{
             elem.current=false;
         })
+        debugger;
         data.current=true;
-        this.model=data.type
+        this.model=data.type;
+        debugger;
+        this.$refs.ruleForm.resetFields();
     },
-    getCode(){
+    //获取验证码
+    getCode(ruleForm){
         var data={
             username: this.ruleForm.email,
-            module:'login'
+            module:this.model
         };
-        getSms(data);
+        $('#getCodeButton').html('发送中....')
+        getSms(data).then((response=>{
+            var result=response.data
+            this.$message({
+                message: result.message+'请先注册',
+                type: 'error'
+            });
+            var timeOut=60;
+            let setTime=()=>{
+                if(timeOut===0){
+                    $('#getCodeButton').removeAttribute('disabled').html('获取验证码')
+                }else{
+                    $('#getCodeButton').setAttribute('disabled','true').html(`重新发送${timeOut}`)
+                    timeOut--;
+                }
+            }
+            setTimeout(function(){
+                setTime()
+            },1000)
+            //未登录跳转到登录页面,并清除form和提示信息
+            // if(result.resCode===1002){
+                
+            // }
+            //
+
+        })).catch((error)=>{
+            console.log(error)
+            
+        });
     },
     submitForm(formName) {
         this.$refs[formName].validate((valid) => {

@@ -57,9 +57,10 @@ module.exports = {
     https: false, // 编译失败时刷新页面
     hot: true, // 开启热加载
     hotOnly: false,
+    proxy:null,
     proxy:{   // 设置代理
       '/devApi': {
-        target: 'http://www.web-jshtml.cn/productapi',//这里理解成用‘/devApi’代替target里面的地址，后面组件中我们掉接口时直接用devApi代替 
+        target: 'http://www.web-jshtml.cn/productapi',//这里理解成用‘/devApi’代替target里面的地址，后面组件中我们调接口时直接用devApi代替 
         changeOrigin: true,
         pathRewrite: {
           '^/devApi': ''
