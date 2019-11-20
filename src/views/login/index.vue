@@ -21,22 +21,22 @@
                 <label>验证码</label>
                 <el-row :gutter="10">
                     <el-col :span="15">
-                        <el-input v-model.number="ruleForm.code" minlength='6' maxlength='6' prop="code"></el-input>
+                        <el-input v-model="ruleForm.code" minlength='6' maxlength='6' prop="code"></el-input>
                     </el-col>
                     <el-col :span="9">
-                        <el-button class='button' type='success' @click='getCode(ruleForm)' id="getCodeButton">获取验证码</el-button>
+                        <el-button class='button' type='success' @click='getCode(ruleForm)' id="getCodeButton" :disabled="buttonStatus.status">{{buttonStatus.text}}</el-button>
                     </el-col>
                 </el-row>
             </el-form-item>
             <el-form-item class="submit">
-                <el-button type="danger" @click="submitForm('ruleForm')" class='button' :disabled='model==="login"'>{{model==='login'?'登录':'注册'}}</el-button>
+                <el-button type="danger" @click="submitForm('ruleForm')" class='button' :disabled='canClick''>{{model==='login'?'登录':'注册'}}</el-button>
             </el-form-item>
         </el-form>
     </div> 
 </div>
 </template>
 <script>
-import {getSms} from '@/api/login.js'
+import {getSms,register,login} from '@/api/login.js'
 import {stripscript,validateUser,validatePassword,validateCode} from '@/utils/validate.js'
 import $ from 'jquery'
 export default {
@@ -118,7 +118,13 @@ export default {
                 {text:'登录',current:true,type:'login'},
                 {text:'注册',current:false,type:'reg'}
             ],
-            model:'login'
+            model:'login',
+            buttonStatus:{
+                status:false,text:'获取验证码'
+            },
+            canClick:true,
+            timer:'',
+            comeDown:''
         }
     },
     created(){
@@ -127,58 +133,108 @@ export default {
     methods: {
     //切换面板
     changeTab(data,ruleForm){
-        debugger;
         this.menuTab.forEach(elem=>{
             elem.current=false;
         })
-        debugger;
         data.current=true;
         this.model=data.type;
-        debugger;
         this.$refs.ruleForm.resetFields();
+        //切换面板清除倒计时
+        this.clearComeDown()
+    },
+    //清除验证码倒计时
+    clearComeDown(){
+        this.buttonStatus.status=false;
+        this.buttonStatus.text='获取验证码';
+        this.canClick=true;
+        clearInterval(this.comeDown)
     },
     //获取验证码
     getCode(ruleForm){
+        let _this=this;
         var data={
-            username: this.ruleForm.email,
+            username: _this.ruleForm.email,
             module:this.model
         };
-        $('#getCodeButton').html('发送中....')
-        getSms(data).then((response=>{
-            var result=response.data
-            this.$message({
-                message: result.message+'请先注册',
-                type: 'error'
-            });
-            var timeOut=60;
-            let setTime=()=>{
-                if(timeOut===0){
-                    $('#getCodeButton').removeAttribute('disabled').html('获取验证码')
+        //注册.登录获取验证码，首先判断邮箱不能为空
+        if(data.username!=''){
+            //网络延时处理
+            this.buttonStatus.status=true;
+            this.buttonStatus.text='发送中';
+            getSms(data).then((response=>{
+                var result=response.data;
+                console.log(data)
+                this.$message({
+                    message: result.message,
+                    type: 'success'
+                });
+                if(result.resCode===0){
+                    //启用登录或者注册按钮
+                    this.canClick=false;
+                     //调用定时器
+                    const TIME_COUNT = 60;
+                    if(!this.comeDown){
+                        this.timer=TIME_COUNT;
+                        this.comeDown=setInterval(()=>{
+                            if(this.timer>0&&this.timer <= TIME_COUNT){
+                                this.timer--;
+                                this.buttonStatus.text=`倒计时${this.timer}秒`;
+                            }else{
+                                this.buttonStatus.status=false;
+                                this.buttonStatus.text='再次获取';
+                                clearInterval(this.comeDown)
+                                this.comeDown=null
+                            }
+                        },1000)
+                    }
                 }else{
-                    $('#getCodeButton').setAttribute('disabled','true').html(`重新发送${timeOut}`)
-                    timeOut--;
+                   //登录提示未注册跳转到注册页面
+                   this.changeTab(this.menuTab[1])
                 }
-            }
-            setTimeout(function(){
-                setTime()
-            },1000)
-            //未登录跳转到登录页面,并清除form和提示信息
-            // if(result.resCode===1002){
+            })).catch((error)=>{
+                console.log(error)
                 
-            // }
-            //
-
-        })).catch((error)=>{
-            console.log(error)
-            
-        });
+            });
+        }else{
+            this.$message.error('邮箱不能为空！')
+        }
     },
     submitForm(formName) {
         this.$refs[formName].validate((valid) => {
         if (valid) {
-            alert('submit!');
+            var data={
+                username:this.ruleForm.email,
+                password:this.ruleForm.pass,
+                code:this.ruleForm.code,
+            }
+            if(this.model==='reg'){
+                register(data).then(response=>{
+                    this.$message({
+                        message: response.data.message,
+                        type: 'success'
+                    });
+                //注册成功，跳转到登录页面
+                this.changeTab(this.menuTab[0])
+                }).catch(error=>{
+                    console.log(error)
+                })
+            }else{
+                login(data).then(response=>{
+                    this.$message({
+                        message:response.data.message,
+                        type:'success'
+                })
+                //将用户信息存入session
+                localStorage.setItem('username',this.ruleForm.email)
+                console.log(localStorage.getItem('username'))
+                //跳转页面
+               this.$router.push({name:'console'})
+                //this.$router.push('/console')
+                }).catch(error=>{
+                    console.log(error)
+                })
+            }   
         } else {
-            console.log('error submit!!');
             return false;
         }
         });

@@ -34,6 +34,7 @@ export function validateCode(value){
         return false
     }
 }
+
 /*
 export 导出可以一次导出多个声明，在需要使用的页面按照
  import {stripscript,validateUser,validatePassword,validateCode} from '@/utils/validate.js' 引入

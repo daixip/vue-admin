@@ -11,8 +11,20 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('../components/login/index.vue')
-  }
+    component: () => import('../views/login/index.vue')
+  },
+  {
+    path: '/console',
+    name: 'console',
+    component: () => import('../views/layout/index.vue'),
+    children:[
+      {
+        path:'/consoleIndex',
+        name:'consoleIndex',
+        component: () => import('../views/console/index.vue'),
+      }
+    ]
+  },
 ]
 const router = new VueRouter({
   routes
