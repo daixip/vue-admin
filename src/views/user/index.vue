@@ -1,12 +1,12 @@
 <template>
     <div>
-       
-        信息管理
+        
+        用户管理
     </div>
 </template>
 <script>
     export default{
-        name:'index',
+        name:'category',
         data(){
             return{}
         },

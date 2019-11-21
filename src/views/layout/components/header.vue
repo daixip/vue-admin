@@ -4,13 +4,14 @@
     </div>
     </template>
 <script>
+    import main from '../../../styles/main.scss'
     export default{}
 </script>
 <style lang='scss' scoped>
     #header-wrap{
         position:fixed;
         top:0;
-        left:250px;
+        left:$width;
         right:0;
         height:75px;
         background-color: #fff;

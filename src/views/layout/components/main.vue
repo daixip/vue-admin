@@ -1,16 +1,16 @@
 <template>
     <div id='main-wrap'>
         <router-view/>
-        控制台
     </div>
 </template>
 <script>
+    import main from '../../../styles/main.scss'
     export default{}
 </script>
 <style lang='scss' scoped>
     #main-wrap{
         position: fixed;
-        left:250px;
+        left:$width;
         right:0;
         top:75px;
         height: 100vh;
