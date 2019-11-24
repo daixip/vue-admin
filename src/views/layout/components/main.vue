@@ -19,5 +19,6 @@
         border-right:30px solid #f7f7f7;
         border-top:30px solid #f7f7f7;
         background-color: #fff;
+        padding:30px 30px 0 30px;
     }
 </style>

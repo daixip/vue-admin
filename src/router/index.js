@@ -28,7 +28,7 @@ const routes = [
     name: 'console',
     meta:{
       name:'控制台',
-      icon:'el-icon-s-home'
+      icon:'console'
     },
     component: () => import('../views/layout/index.vue'),
     children:[
@@ -47,7 +47,7 @@ const routes = [
     name: 'news',
     meta:{
       name:'信息管理',
-      icon:'el-icon-s-marketing'
+      icon:'news'
     },
     component: () => import('../views/layout/index.vue'),
     children:[
@@ -65,7 +65,6 @@ const routes = [
         component: () => import('../views/News/category.vue'),
         meta:{
           name:'信息分类',
-          icon:'el-icon-s-fold'
         }
       },
     ]
@@ -76,7 +75,7 @@ const routes = [
     component: () => import('../views/layout/index.vue'),
     meta:{
       name:'用户管理',
-      icon:'el-icon-s-grid'
+      icon:'user'
     },
     children:[
       {

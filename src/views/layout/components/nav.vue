@@ -1,5 +1,8 @@
 <template>
     <div id='nav-wrap'>
+        <div class='logo'>
+            <img src="../../../assets/logo.png" alt="">
+        </div>
         <el-menu 
             default-active="1" class="el-menu-vertical-demo"
             @open="handleOpen" @close="handleClose" :collapse="isCollapse" 
@@ -8,7 +11,7 @@
                 <el-submenu v-if='!item.hidden' :key="index" :index="index+''">
                     <!-- 一级菜单 -->
                     <template slot="title">
-                        <i :class="item.meta.icon"></i>
+                        <svg-icon :iconClass='item.meta.icon' :className='item.meta.icon'/>
                         <span slot="title">{{item.meta.name}}</span>
                     </template>
                     <!-- 子级菜单 -->
@@ -26,12 +29,8 @@
         name:'navMenu',
         data(){
             return{
-                isCollapse:false,
-                routers:this.$router.options.routes
+                routers:this.$router.options.routes,
             }
-        },
-        created(){
-          
         },
         methods: {
             handleOpen(key, keyPath) {
@@ -39,6 +38,11 @@
             },
             handleClose(key, keyPath) {
                 // console.log(key, keyPath);
+            }
+        },
+        computed:{
+            isCollapse(){
+                return this.$store.state.isCollapse
             }
         }
     }
@@ -51,6 +55,17 @@
         width:$width;
         height: 100vh;
         background-color: #344a5f;
+        svg{
+            font-size: 30px;
+            margin-right: 20px;
+        }
+    }
+    .logo{
+        width:97px;
+        margin:20px auto;
+        img{
+            width:100%;
+        }
     }
 </style>
 <style lang='scss'>

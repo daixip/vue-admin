@@ -6,6 +6,9 @@ import "./styles/normalize.scss"
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import VueCookies from 'vue-cookies'
+//引入svg
+import './icons'
+
 Vue.use(ElementUI);
 Vue.use(VueCookies)
 
