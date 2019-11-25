@@ -8,9 +8,9 @@
               <div class="pull-left">
                   <img src="@/assets/img/user.png" alt="">
               </div>
-              <h5 class='pull-right actor'>管理员</h5>
+              <h5 class='pull-right actor'>{{username}}</h5>
             </div>
-            <div class='header-icon pull-right'>
+            <div class='header-icon pull-right' @click='exit'>
                 <svg-icon iconClass='logout' className='logout'/>
             </div>
         </div>
@@ -27,6 +27,16 @@
         methods:{
             navMenuState(){
                 this.$store.commit('app/SET_COLLAPSE')
+            },
+            exit(){
+                this.$store.dispatch('user/exists').then(()=>{
+                     this.$router.push({name:'login'})
+                });
+            }
+        },
+        computed:{
+            username(){
+                return this.$store.state.user.username
             }
         }
     }

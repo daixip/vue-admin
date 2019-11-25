@@ -1,5 +1,6 @@
 import router from './index';
-import {getToken} from '@/utils/getToken.js';
+import store from '../store/index'
+import {getToken,removeToken,removeUserName} from '@/utils/getToken.js';
 //定义白名单，防止next()中带参数跳转的时候出现死循环
 const white=['/login']
 router.beforeEach((to,from,next)=>{
@@ -7,7 +8,18 @@ router.beforeEach((to,from,next)=>{
     //from:上一个页面
     if(getToken()){
         //动态路由，每个角色分配不同的菜单
-        console.loh('token存在')
+        if(to.path==='/login'){
+            removeToken();
+            removeUserName();
+            store.commit('user/SET_TOKEN','');
+            store.commit('user/SET_USERNAME','');
+            next();
+        }else{
+            //1.获取用户的角色
+            //2.动态分配路由权限
+            next();
+        }
+        next()
     }else{
         console.log('token不存在')
         /*
