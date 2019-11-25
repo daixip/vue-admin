@@ -4,8 +4,7 @@
             <img src="../../../assets/logo.png" alt="">
         </div>
         <el-menu 
-            default-active="1" class="el-menu-vertical-demo"
-            @open="handleOpen" @close="handleClose" :collapse="isCollapse" 
+            default-active="1" class="el-menu-vertical-demo" :collapse="isCollapse" 
             background-color='transparent' text-color='white' router>
             <template v-for='(item,index) in routers'>
                 <el-submenu v-if='!item.hidden' :key="index" :index="index+''">
@@ -32,17 +31,9 @@
                 routers:this.$router.options.routes,
             }
         },
-        methods: {
-            handleOpen(key, keyPath) {
-                // console.log(key, keyPath);
-            },
-            handleClose(key, keyPath) {
-                // console.log(key, keyPath);
-            }
-        },
         computed:{
             isCollapse(){
-                return this.$store.state.isCollapse
+                return this.$store.state.app.isCollapse
             }
         }
     }
@@ -59,12 +50,34 @@
             font-size: 30px;
             margin-right: 20px;
         }
+        @include webkit(transition, all .3s ease 0s);
     }
     .logo{
         width:97px;
         margin:20px auto;
         img{
             width:100%;
+            @include webkit(transition, all .3s ease 0s);
+        }
+    }
+    .open{
+        #nav-wrap{
+            width:$width;
+        }
+        .logo{
+            img{
+            width:100%;
+        }
+        }
+    }
+    .closed{
+        #nav-wrap{
+            width:$navMenuMin;
+        }
+        .logo{
+            img{
+            width:60%;
+        }
         }
     }
 </style>
@@ -75,4 +88,7 @@
     color:white !important;
 }
 .el-submenu.is-active.is-opened .el-submenu__title{background-color: $mainColor !important;}
+.el-menu .el-menu--popup .el-menu--popup-right-start{
+    background-color:rgba(245,108,108,0.3) !important;
+}
 </style>

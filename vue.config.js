@@ -71,7 +71,7 @@ module.exports = {
     proxy:null,
     proxy:{   // 设置代理
       '/devApi': {
-        target: 'http://www.web-jshtml.cn/productapi',//这里理解成用‘/devApi’代替target里面的地址，后面组件中我们调接口时直接用devApi代替 
+        target: 'http://www.web-jshtml.cn/productapi/token',//这里理解成用‘/devApi’代替target里面的地址，后面组件中我们调接口时直接用devApi代替 
         changeOrigin: true,
         pathRewrite: {
           '^/devApi': ''

@@ -26,7 +26,7 @@
         },
         methods:{
             navMenuState(){
-                this.$store.commit('SET_COLLAPSE')
+                this.$store.commit('app/SET_COLLAPSE')
             }
         }
     }
@@ -40,7 +40,8 @@
         height:75px;
         line-height:75px;
         background-color: #fff;
-        -webkit-box-shadow:0 3px 16px 0 rgba(0,0,0,0.1)
+        -webkit-box-shadow:0 3px 16px 0 rgba(0,0,0,0.1);
+        @include webkit(transition, all .3s ease 0s);
     }
     .header-icon{
         padding:0 32px;
@@ -59,6 +60,16 @@
         img{
             vertical-align: middle;
             padding-right: 32px;
+        }
+    }
+    .open{
+        #header-wrap{
+            left:$width;
+        } 
+    }
+    .closed{
+        #header-wrap{
+            left:$navMenuMin;
         }
     }
 </style>

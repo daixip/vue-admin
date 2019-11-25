@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id='layerout' :class='$store.state.app.isCollapse? "closed":"open"'>
         <layoutHeader/>
         <layoutMain/>
         <layoutNav/>

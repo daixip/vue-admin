@@ -26,6 +26,7 @@ const routes = [
   {
     path: '/console',
     name: 'console',
+    redirect:"consoleIndex",
     meta:{
       name:'控制台',
       icon:'console'

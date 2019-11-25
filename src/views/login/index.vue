@@ -219,17 +219,18 @@ export default {
                     console.log(error)
                 })
             }else{
-                login(data).then(response=>{
+                this.$store.dispatch('user/Login',data).then(response=>{
                     this.$message({
                         message:response.data.message,
                         type:'success'
-                })
-                //将用户信息存入session
-                localStorage.setItem('username',this.ruleForm.email)
-                console.log(localStorage.getItem('username'))
-                //跳转页面
-               this.$router.push({name:'console'})
-                //this.$router.push('/console')
+                    })
+                    console.log(response)
+                    //将用户信息存入session
+                    localStorage.setItem('username',this.ruleForm.email)
+                    console.log(localStorage.getItem('username'))
+                    //跳转页面
+                    this.$router.push({name:'console'})
+                    //this.$router.push('/console')
                 }).catch(error=>{
                     console.log(error)
                 })
