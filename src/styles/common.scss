@@ -39,4 +39,15 @@ li.el-submenu {
         background-color: $mainColor !important;
     }
 }
-
+.el-input{
+    width:165px;
+    height: 40px;
+}
+.el-range-editor.el-input__inner{
+    border:1px solid #DCDFE6;
+    width:400px;
+    height: 40px;
+}
+.el-range-editor.el-input__inner{
+    display: inline-block;
+}

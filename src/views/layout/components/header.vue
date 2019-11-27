@@ -10,7 +10,7 @@
               </div>
               <h5 class='pull-right actor'>管理员</h5>
             </div>
-            <div class='header-icon pull-right'>
+            <div class='header-icon pull-right' @click='logout'>
                 <svg-icon iconClass='logout' className='logout'/>
             </div>
         </div>
@@ -27,6 +27,11 @@
         methods:{
             navMenuState(){
                 this.$store.commit('app/SET_COLLAPSE')
+            },
+            logout(){
+                this.$store.dispatch('user/exist').then(()=>{
+                    this.$router.push('/login')
+                })
             }
         }
     }
