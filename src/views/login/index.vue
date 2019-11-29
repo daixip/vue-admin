@@ -29,7 +29,7 @@
                 </el-row>
             </el-form-item>
             <el-form-item class="submit">
-                <el-button type="danger" @click="submitForm('ruleForm')" class='button' :disabled='canClick''>{{model==='login'?'登录':'注册'}}</el-button>
+                <el-button type="danger" @click="submitForm('ruleForm')" class='button' :disabled='canClick'>{{model==='login'?'登录':'注册'}}</el-button>
             </el-form-item>
         </el-form>
     </div> 
@@ -224,8 +224,6 @@ export default {
                         message:response.data.message,
                         type:'success'
                     })
-                    //将用户信息存入session
-                    localStorage.setItem('username',this.ruleForm.email)
                     //跳转页面
                     this.$router.push({name:'console'})
                     //this.$router.push('/console')
