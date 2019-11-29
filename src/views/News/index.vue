@@ -31,7 +31,14 @@
            <el-col :span='2'>
                 <div>
                     <span>关键字：</span>
-                    <span>ID</span>
+                    <el-select v-model="value" placeholder="请选择">
+                        <el-option
+                        v-for="item in options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                        </el-option>
+                    </el-select>
                 </div>
            </el-col>
            <el-col :span='7'>
@@ -40,6 +47,11 @@
                     <el-button type="danger">危险按钮</el-button>
                </div>
            </el-col>
+           <el-col :span='7'>
+            <div>
+                <el-button type="danger">新增</el-button>
+            </div>
+        </el-col>
         </el-row>
         <div>
             <el-table

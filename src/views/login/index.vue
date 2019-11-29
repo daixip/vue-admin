@@ -219,7 +219,7 @@ export default {
                     console.log(error)
                 })
             }else{
-                this.$store.dispatch('user/Login',data).then(response=>{
+                this.$store.dispatch('user/login',data).then(response=>{
                     this.$message({
                         message:response.data.message,
                         type:'success'

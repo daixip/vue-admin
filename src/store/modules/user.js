@@ -22,9 +22,9 @@ const mutations={
 }
 const actions={
       //登录
-      login({ commit }, repuestData) {
+      login({ commit }, requestData) {
             return new Promise((resolve, reject) => {
-                Login(repuestData).then((response) => {
+                login(requestData).then((response) => {
                     console.log(response)
                     let data = response.data.data
                     // 普通的
@@ -33,7 +33,7 @@ const actions={
                     // 解构的
                     commit('SET_TOKEN', data.token);
                     commit('SET_USERNAME', data.username);
-                    setToKen(data.token);
+                    setToken(data.token);
                     setUserName(data.username);
                     resolve(response)
                 }).catch(error => {
@@ -43,7 +43,7 @@ const actions={
         },
         exit({ commit }){
             return new Promise((resolve, reject) => {
-                removeToKen();
+                  removeToken();
                 removeUserName();
                 commit('SET_TOKEN', '');
                 commit('SET_USERNAME', '');

@@ -11,8 +11,8 @@ router.beforeEach((to,from,next)=>{
         
         if(to.path==='/login'){
             //用户跳到登录页面，清除token
-            store.commit('SET_TOKEN','');
-            store.commit('SET_USERNAME','');
+            store.commit('user/SET_TOKEN','');
+            store.commit('user/SET_USERNAME','');
             removeToken();
             removeUserName()
         }else{
